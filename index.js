@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import connectDB from './src/db/index.js'
 import cors from 'cors'
 // import cookieParser from 'cookie-parser';
+import userRouter from "./src/routes/user.route.js"
 
 
 
@@ -20,6 +21,8 @@ app.use(express.json())
 app.get("/", (req, res) => {
   res.send("Hello World!");
 });
+
+app.use("/api/user/",userRouter)
 
 
 connectDB()
