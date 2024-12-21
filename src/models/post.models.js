@@ -22,9 +22,9 @@ const postSchema = new mongoose.Schema({
         type : mongoose.Schema.Types.ObjectId,
         ref : 'FbUser'
     }],
-    repost : [{
+    share : [{
         type : mongoose.Schema.Types.ObjectId,
-        ref : 'repost'
+        ref : 'FbPost'
     }]},
     {
         timestamps : true

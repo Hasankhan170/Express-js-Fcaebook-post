@@ -19,9 +19,9 @@ const userSchema = new mongoose.Schema({
         type : String,
         required : true,
     },
-    friends :[{
+    posts :[{
         type : mongoose.Schema.Types.ObjectId,
-        ref : 'FbUser'
+        ref : 'FbPost'
     }]},
     {
         timestamps : true,
