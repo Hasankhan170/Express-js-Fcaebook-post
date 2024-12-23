@@ -23,8 +23,6 @@ const uploadImgToCloudinary = async (filePath) => {
         api_key: process.env.CLOUDINARY_API_KEY,
         api_secret: process.env.CLOUDINARY_API_SECRET
     })
-    console.log("Cloudinary Cloud Name:", process.env.CLOUDINARY_CLOUD_NAME);
-    console.log(process.env.CLOUDINARY_API_KEY);
     try {
         const uploadResult = await cloudinary.uploader.upload(filePath, {
           resource_type: "auto",
@@ -60,4 +58,32 @@ const register = async(req,res)=>{
     })
 }
 
-export {register}
+const login = async (req,res)=>{
+    const {email,password} = req.body;
+    if(!email) return res.status(404).json({message : "Please enter a email"})        
+    if(!password) return res.status(404).json({message : "Please enter a password"})
+
+    const user = await User.findOne ({email:email})
+    if(!user) return res.status(404).json({message : "User not found"})
+    
+    const isPassword = await bcrypt.compare(password, user.password)
+    if(!isPassword) return res.status(404).json({message : "password mismatch"})
+
+    const access = generateAccessToken(user)
+    const refresh = generateRefreshToken(user)
+
+    res.cookie('refresh', refresh, {
+        httpOnly: true,
+        secure: false,  
+        sameSite: "strict", 
+    })
+
+    res.status(200).json({
+        message : "User logged in successfully",
+        access,
+        refresh,
+        data : user
+    })
+}
+
+export {register,login}
