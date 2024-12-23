@@ -12,20 +12,9 @@ const postSchema = new mongoose.Schema({
     },
     comments : [{
         type : mongoose.Schema.Types.ObjectId,
-        ref : 'FbUser'
-    }],
-    like : [{
-        type : mongoose.Schema.Types.ObjectId,
-        ref : 'FbUser'
-    }],
-    dislike : [{
-        type : mongoose.Schema.Types.ObjectId,
-        ref : 'FbUser'
-    }],
-    share : [{
-        type : mongoose.Schema.Types.ObjectId,
-        ref : 'FbPost'
-    }]},
+        ref : 'FbComment'
+    }]
+    }, 
     {
         timestamps : true
     }

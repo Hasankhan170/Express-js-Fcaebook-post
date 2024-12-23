@@ -19,7 +19,7 @@ const userSchema = new mongoose.Schema({
         type : String,
         required : true,
     },
-    posts :[{
+    post :[{
         type : mongoose.Schema.Types.ObjectId,
         ref : 'FbPost'
     }]},
