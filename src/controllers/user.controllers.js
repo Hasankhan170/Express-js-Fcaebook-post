@@ -92,13 +92,13 @@ const logout = async (req,res)=>{
 }
 
 const refreshToken = async (req,res)=>{
-    const refreshToken = req.cookies.refresh || req.body.refresh
-    if(!refreshToken) return res.status(401).json({message : "No refresh token found"})
+    const refresh= req.cookies.refresh || req.body.refresh
+    if(!refresh) return res.status(401).json({message : "No refresh token found"})
     const decoded = jwt.verify(refresh,process.env.REFRESH_TOKEN)
     const user = await User.findOne({email : decoded.email})
     if(!user) return res.status(403).json({message : "Invalid refresh token"})
     const access = generateAccessToken(user)
-    res.status(200).json({message: "access token generate",accessToken:generateToken})
+    res.status(200).json({message: "access token generate",accessToken: access })
     res.json({decoded})
 }
 
