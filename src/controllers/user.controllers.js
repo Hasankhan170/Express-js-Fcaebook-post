@@ -3,6 +3,7 @@ import User from "../models/user.models.js"
 import { v2 as cloudinary } from "cloudinary";
 import bcrypt from "bcrypt";
 import fs from "fs";
+import { decode } from "punycode";
 
 const generateAccessToken = (user)=>{
     return jwt.sign({email:user.email},process.env.ACCESS_TOKEN,{
@@ -98,8 +99,12 @@ const refreshToken = async (req,res)=>{
     const user = await User.findOne({email : decoded.email})
     if(!user) return res.status(403).json({message : "Invalid refresh token"})
     const access = generateAccessToken(user)
-    res.status(200).json({message: "access token generate",accessToken: access })
-    res.json({decoded})
+    res.status(200).json(
+        {
+         message: "access token generate",
+         accessToken: access,
+         user : decoded
+        })
 }
 
 export {register,login,logout,refreshToken}
