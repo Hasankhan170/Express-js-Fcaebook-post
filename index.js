@@ -4,6 +4,8 @@ import connectDB from './src/db/index.js'
 import cors from 'cors'
 import cookieParser from 'cookie-parser';
 import userRouter from "./src/routes/user.route.js"
+import postRouter from "./src/routes/post.route.js"
+
 
 
 
@@ -23,6 +25,8 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/user/",userRouter)
+app.use("/api/userPost/",postRouter)
+
 
 
 connectDB()

@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import User from "../models/user.models.js"
+import FbUser from "../models/user.models.js"
 import { v2 as cloudinary } from "cloudinary";
 import bcrypt from "bcrypt";
 import fs from "fs";
@@ -42,11 +42,11 @@ const register = async(req,res)=>{
     if(!email) return res.status(404).json({message : "Please enter a email"})        
     if(!password) return res.status(404).json({message : "Please enter a password"})
 
-    const user = await User.findOne({email: email})   
+    const user = await FbUser.findOne({email: email})   
     if(user) return res.status(400).json({message : "Email already exists"})
 
     const imageUrl = await uploadImgToCloudinary(req.file.path)
-    const userCreate = await User.create({
+    const userCreate = await FbUser.create({
         name,
         email,
         password,
@@ -64,7 +64,7 @@ const login = async (req,res)=>{
     if(!email) return res.status(404).json({message : "Please enter a email"})        
     if(!password) return res.status(404).json({message : "Please enter a password"})
 
-    const user = await User.findOne ({email:email})
+    const user = await FbUser.findOne ({email:email})
     if(!user) return res.status(404).json({message : "User not found"})
     
     const isPassword = await bcrypt.compare(password, user.password)
@@ -96,7 +96,7 @@ const refreshToken = async (req,res)=>{
     const refresh= req.cookies.refresh || req.body.refresh
     if(!refresh) return res.status(401).json({message : "No refresh token found"})
     const decoded = jwt.verify(refresh,process.env.REFRESH_TOKEN)
-    const user = await User.findOne({email : decoded.email})
+    const user = await FbUser.findOne({email : decoded.email})
     if(!user) return res.status(403).json({message : "Invalid refresh token"})
     const access = generateAccessToken(user)
     res.status(200).json(
