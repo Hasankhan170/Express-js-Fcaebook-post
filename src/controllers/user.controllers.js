@@ -91,4 +91,15 @@ const logout = async (req,res)=>{
     res.status(200).json({message : "User logged out successfully"})
 }
 
-export {register,login,logout}
+const refreshToken = async (req,res)=>{
+    const refreshToken = req.cookies.refresh || req.body.refresh
+    if(!refreshToken) return res.status(401).json({message : "No refresh token found"})
+    const decoded = jwt.verify(refresh,process.env.REFRESH_TOKEN)
+    const user = await User.findOne({email : decoded.email})
+    if(!user) return res.status(403).json({message : "Invalid refresh token"})
+    const access = generateAccessToken(user)
+    res.status(200).json({message: "access token generate",accessToken:generateToken})
+    res.json({decoded})
+}
+
+export {register,login,logout,refreshToken}
