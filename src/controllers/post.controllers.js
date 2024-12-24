@@ -38,8 +38,15 @@ const singleUserPost = async (req,res)=>{
 
 }
 
-// const getAllUserPost = async (req,req)=>{
-    
-// }
+// get all user post
+const getAllUserPost = async (req,res)=>{
+   
+    const user = await FbPost.find()
+    if(!user) return res.status(404).json({message : "No post found"})
+    res.status(200).json({
+        message : "All posts found",
+        user
+    })
+}
 
-export {postCreate,singleUserPost}
+export {postCreate,singleUserPost,getAllUserPost}
