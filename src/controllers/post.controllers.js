@@ -17,7 +17,10 @@ const postCreate = async (req,res)=>{
         $push : {posts : newPost._id}
     })
 
-    res.status(200).json({post : newPost})
+    res.status(200).json({
+        post : newPost,
+        user :  await FbUser.findById(userId).populate("posts")
+    })
     
 }
 
