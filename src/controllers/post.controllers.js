@@ -38,4 +38,8 @@ const singleUserPost = async (req,res)=>{
 
 }
 
+// const getAllUserPost = async (req,req)=>{
+    
+// }
+
 export {postCreate,singleUserPost}
