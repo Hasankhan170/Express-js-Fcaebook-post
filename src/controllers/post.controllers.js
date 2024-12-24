@@ -87,6 +87,19 @@ const deletePost = async (req, res) => {
     });
 }
 
+const editPost = async (req,res)=>{
+    const { userId } = req.params;
+    const { content,postId } = req.body;
+    const user = await FbUser.findById(userId);
+    if(!user) return res.status(404).json({ message: "User not found"})
+    const post = await FbPost.findByIdAndUpdate({_id: postId,createBy:userId},{ content: content }, {...req.body})
+    if(!post) return res.status(404).json({message : "Post not found"})
+    res.status(200).json({
+        message : "Post updated successfully",
+        data :post
+    })
+}
 
 
-export {postCreate,singleUserPost,getAllUserPost,deletePost}
+
+export {postCreate,singleUserPost,getAllUserPost,deletePost,editPost}
