@@ -1,11 +1,12 @@
 import FbPost from "../models/post.models.js"
 import FbUser from "../models/user.models.js"
 
-
+//create user posts
 const postCreate = async (req,res)=>{
     const {content} = req.body;
     const {userId} = req.params;
     if(!content) return res.status(404).json({message : "Please enter a content"})
+
     const user = await FbUser.findById(userId)
     if(!user) return res.status(404).json({message : "User not found"})
     const newPost = await FbPost.create({
@@ -24,4 +25,17 @@ const postCreate = async (req,res)=>{
     
 }
 
-export {postCreate}
+//get single user posts
+const singleUserPost = async (req,res)=>{
+    const {userId} = req.params;
+    const user = await FbUser.findById(userId).populate("posts")
+    if(!user) return res.status(404).json({message : "User not found"})
+    
+    res.status(200).json({
+        message : "post found",
+        user
+    })
+
+}
+
+export {postCreate,singleUserPost}
