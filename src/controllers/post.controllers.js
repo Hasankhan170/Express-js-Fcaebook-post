@@ -66,4 +66,27 @@ const getAllUserPost = async (req, res) => {
 }
 
 
-export {postCreate,singleUserPost,getAllUserPost}
+// single user post delete 
+const deletePost = async (req, res) => {
+    const { userId } = req.params; 
+    const { postId } = req.body;    
+
+    
+    const post = await FbPost.findOneAndDelete({
+        _id: postId,
+        createdBy: userId  
+    });
+
+    if (!post) {
+        return res.status(404).json({ message: "Post not found or does not belong to the user" });
+    }
+
+    res.status(200).json({
+        message: "Post deleted successfully",
+        deletedPost: post  
+    });
+}
+
+
+
+export {postCreate,singleUserPost,getAllUserPost,deletePost}
