@@ -39,14 +39,31 @@ const singleUserPost = async (req,res)=>{
 }
 
 // get all user post
-const getAllUserPost = async (req,res)=>{
-   
-    const user = await FbPost.find()
-    if(!user) return res.status(404).json({message : "No post found"})
-    res.status(200).json({
-        message : "All posts found",
-        user
-    })
+const getAllUserPost = async (req, res) => {
+    const page = parseInt(req.query.page) || 1; 
+    const limit = parseInt(req.query.limit) || 3; 
+
+    const skip = (page - 1) * limit;
+
+    try {
+        const posts = await FbPost.find({}).skip(skip).limit(limit);
+
+        if (!posts || posts.length === 0) {
+            return res.status(404).json({ message: "No posts found" });
+        }
+
+        res.status(200).json({
+            message: "All posts found",
+            posts,
+            length: posts.length,
+            page,
+            limit,
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Server error" });
+    }
 }
+
 
 export {postCreate,singleUserPost,getAllUserPost}
