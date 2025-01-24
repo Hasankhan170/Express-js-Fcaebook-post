@@ -3,7 +3,7 @@ import FbUser from "../models/user.models.js"
 import { v2 as cloudinary } from "cloudinary";
 import bcrypt from "bcrypt";
 import fs from "fs";
-import { decode } from "punycode";
+// import { decode } from "punycode";
 
 const generateAccessToken = (user) => {
     return jwt.sign({ email: user.email, id: user._id}, process.env.ACCESS_TOKEN, { expiresIn: '6h' });
