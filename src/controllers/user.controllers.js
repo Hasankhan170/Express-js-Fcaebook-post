@@ -5,12 +5,12 @@ import bcrypt from "bcrypt";
 import fs from "fs";
 import { decode } from "punycode";
 
-const generateAccessToken = (user)=>{
-    return jwt.sign({email:user.email},process.env.ACCESS_TOKEN,{
-        expiresIn: '6h' 
-    })
-}
+const generateAccessToken = (user) => {
+    return jwt.sign({ email: user.email, id: user._id}, process.env.ACCESS_TOKEN, { expiresIn: '6h' });
+};
 
+
+//generate refresh token
 const generateRefreshToken = (user)=>{
     return jwt.sign({email:user.email},process.env.REFRESH_TOKEN,{
         expiresIn: '7d'
@@ -36,6 +36,8 @@ const uploadImgToCloudinary = async (filePath) => {
       }
 };
 
+
+
 const register = async(req,res)=>{
     const {name,email,password} = req.body;
     if(!name) return res.status(404).json({message : "Please enter a name"})       
@@ -58,6 +60,8 @@ const register = async(req,res)=>{
         data: userCreate,
     })
 }
+
+
 
 const login = async (req,res)=>{
     const {email,password} = req.body;
@@ -87,6 +91,7 @@ const login = async (req,res)=>{
     })
 }
 
+
 const logout = async (req,res)=>{
     res.clearCookie('refresh')
     res.status(200).json({message : "User logged out successfully"})
@@ -106,5 +111,9 @@ const refreshToken = async (req,res)=>{
          user : decoded
         })
 }
+
+
+
+
 
 export {register,login,logout,refreshToken}

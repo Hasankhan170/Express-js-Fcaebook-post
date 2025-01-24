@@ -4,11 +4,11 @@ import authenticateUser from "../middleware/auth.middleware.js"
 
 const router = express.Router()
 
-router.post("/post/:userId", authenticateUser,postCreate)
-router.get("/SingleUserpost/:userId", authenticateUser,singleUserPost)
+router.post("/post", authenticateUser,postCreate)
+router.get("/SingleUserpost/:id", authenticateUser,singleUserPost)
 router.get("/getAllUserposts",authenticateUser,getAllUserPost)
-router.delete("/deletePost/:userId",authenticateUser,deletePost)
-router.put("/editPost/:userId",authenticateUser,editPost)
+router.delete("/deletePost/:id",authenticateUser,deletePost)
+router.put("/editPost/:id",authenticateUser,editPost)
 
 
 

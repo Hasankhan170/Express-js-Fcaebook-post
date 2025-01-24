@@ -4,14 +4,13 @@ import FbUser from "../models/user.models.js"
 //create user posts
 const postCreate = async (req,res)=>{
     const {content} = req.body;
-    const {userId} = req.params;
     if(!content) return res.status(404).json({message : "Please enter a content"})
-
+    const userId = req.user.id;
     const user = await FbUser.findById(userId)
     if(!user) return res.status(404).json({message : "User not found"})
     const newPost = await FbPost.create({
         content,
-        createdBy : userId
+        createdBy : user.id
     })
 
     await user.updateOne({
@@ -27,8 +26,8 @@ const postCreate = async (req,res)=>{
 
 //get single user posts
 const singleUserPost = async (req,res)=>{
-    const {userId} = req.params;
-    const user = await FbUser.findById(userId).populate("posts")
+    const {id} = req.params;
+    const user = await FbUser.findById(id).populate("posts")
     if(!user) return res.status(404).json({message : "User not found"})
     
     res.status(200).json({
@@ -66,39 +65,63 @@ const getAllUserPost = async (req, res) => {
 }
 
 
-// single user post delete 
 const deletePost = async (req, res) => {
-    const { userId } = req.params; 
-    const { postId } = req.body;    
+    const { id } = req.params;
+    const userId = req.user.id;
+
+    try {
+        const post = await FbPost.findByIdAndDelete(id);
+        if (!post) return res.status(404).json({ message: "Post not found" });
+
+        const user = await FbUser.findById(userId);
+        if (!user) return res.status(404).json({ message: "User not found" });
+
+        console.log("User posts before update:", user.posts);
+
+        user.posts.pull(id);
+        await user.save();
+
+        console.log("User posts after update:", user.posts);
+
+        const updatedUser = await FbUser.findById(userId).populate("posts");
+
+
+        res.status(200).json({
+            message: "Post deleted successfully",
+            data: updatedUser,
+        });
+    } catch (error) {
+        console.error("Error deleting post:", error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+};
+
+
+const editPost = async (req, res) => {
+    const { id } = req.params; 
+    const userId = req.user.id; 
+    const { content } = req.body;
+    
+
+    const user = await FbUser.findById(userId);
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+   
+    const post = await FbPost.findByIdAndUpdate(
+        { _id: id, createdBy: userId },  
+        { content: content }, 
+        { new: true } 
+    );
 
     
-    const post = await FbPost.findOneAndDelete({
-        _id: postId,
-        createdBy: userId  
-    });
-
-    if (!post) {
-        return res.status(404).json({ message: "Post not found or does not belong to the user" });
-    }
+    if (!post) return res.status(404).json({ message: "Post not found or does not belong to the user" });
 
     res.status(200).json({
-        message: "Post deleted successfully",
-        deletedPost: post  
+        message: "Post updated successfully",
+        data: post
     });
-}
+};
 
-const editPost = async (req,res)=>{
-    const { userId } = req.params;
-    const { content,postId } = req.body;
-    const user = await FbUser.findById(userId);
-    if(!user) return res.status(404).json({ message: "User not found"})
-    const post = await FbPost.findByIdAndUpdate({_id: postId,createBy:userId},{ content: content }, {...req.body})
-    if(!post) return res.status(404).json({message : "Post not found"})
-    res.status(200).json({
-        message : "Post updated successfully",
-        data :post
-    })
-}
 
 
 

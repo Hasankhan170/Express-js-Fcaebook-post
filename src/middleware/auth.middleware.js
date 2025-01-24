@@ -1,18 +1,20 @@
 import jwt from "jsonwebtoken";
 
-const authenticateUser = async (req, res, next) => {
+const authenticateUser = (req, res, next) => {
+  const token = req.header('Authorization')?.replace('Bearer ', '');  
+  if (!token) return res.status(401).json({ message: "Access Denied" });
+  console.log("Token received: ", token);
 
-  const token = req.headers["authorization"]?.split(" ")[1];
-  if (!token) {
-    return res.status(401).json({ message: "no token found" });
-  }
-  jwt.verify(token, process.env.ACCESS_TOKEN, (err, user) => {
-    if (err) {
-      return res.status(403).json({ message: "invalid token" });
-    }
-    req.user = user;
-    next();
+
+  jwt.verify(token, process.env.ACCESS_TOKEN, (err, decoded) => {
+      if (err) return res.status(403).json({ message: "Invalid Token" });
+      console.log("Decoded Token: ", decoded);
+      req.user = decoded; 
+      next();
   });
+  
+  
 };
+
 
 export default authenticateUser;
